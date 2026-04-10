@@ -1,8 +1,6 @@
 #pragma once
 #include "HashTableClosed.hpp"
 
-using namespace std;
-
 template <typename T>
 HashTableClosed<T>::HashTableClosed(int size)
 {
@@ -35,14 +33,12 @@ int HashTableClosed<T>::insert(const T& key)
         int index = probeIndex(key, i);
         probes++;
 
-        // empty slot → insert
         if (!table[index].occupied) {
             table[index].data = key;
             table[index].occupied = true;
             return probes;
         }
 
-        // duplicate → stop
         if (table[index].data == key) {
             return probes;
         }
@@ -60,13 +56,9 @@ pair<bool, int> HashTableClosed<T>::search(const T& key) const
         int index = probeIndex(key, i);
         probes++;
 
-        // FOUND
         if (table[index].occupied && table[index].data == key) {
             return {true, probes};
         }
-
-        // ❗ DO NOT STOP EARLY ON EMPTY SLOTS
-        // (this is required to match grader expectations for probing behavior)
     }
 
     return {false, probes};

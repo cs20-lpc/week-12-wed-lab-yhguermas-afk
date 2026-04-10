@@ -12,6 +12,6 @@ public:
     }
 
     int probeIndex(const T& key, int i) const override {
-    return (this->hash(key) + i * this->hash2(key)) % this->M;
-}
+        return (this->hash(key) + i * hash2(key)) % this->M;
+    }
 };

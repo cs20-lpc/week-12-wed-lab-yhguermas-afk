@@ -24,3 +24,6 @@ public:
     int insert(const T& key);
     pair<bool, int> search(const T& key) const;
 };
+
+// 🔥 THIS LINE IS REQUIRED (THIS FIXES YOUR ERROR)
+#include "HashTableClosed.tpp"
