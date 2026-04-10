@@ -9,7 +9,8 @@ protected:
         T data;
         bool occupied;
 
-        Entry() : occupied(false) {}
+        // ✅ CRITICAL FIX: initialize properly
+        Entry() : data(), occupied(false) {}
     };
 
     Entry* table;
