@@ -16,7 +16,6 @@ HashTableClosed<T>::HashTableClosed(int size)
 template <typename T>
 HashTableClosed<T>::~HashTableClosed()
 {
-    
     delete[] table;
 }
 
@@ -60,12 +59,15 @@ pair<bool, int> HashTableClosed<T>::search(const T& key) const
         int index = probeIndex(key, i);
         probes++;
 
-        // FOUND
+        // found key
         if (table[index].occupied && table[index].data == key) {
             return {true, probes};
         }
 
-        // IMPORTANT: do NOT stop on empty slot (grading requirement)
+        // IMPORTANT: stop early if empty slot is hit
+        if (!table[index].occupied) {
+            return {false, probes};
+        }
     }
 
     return {false, probes};
