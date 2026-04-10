@@ -56,8 +56,14 @@ pair<bool, int> HashTableClosed<T>::search(const T& key) const
         int index = probeIndex(key, i);
         probes++;
 
+        // FOUND
         if (table[index].occupied && table[index].data == key) {
             return {true, probes};
+        }
+
+        // STOP EARLY ON EMPTY SLOT (THIS FIXES YOUR 51.00 BUG)
+        if (!table[index].occupied) {
+            return {false, probes};
         }
     }
 
