@@ -16,6 +16,7 @@ HashTableClosed<T>::HashTableClosed(int size)
 template <typename T>
 HashTableClosed<T>::~HashTableClosed()
 {
+    
     delete[] table;
 }
 
