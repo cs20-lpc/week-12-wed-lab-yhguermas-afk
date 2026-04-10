@@ -1,13 +1,59 @@
+#pragma once
+
 template <typename T>
-int HashTableClosed<T>::insert(const T& key)
-{
-    // TO DO:
-    return 0;
+HashTableClosed<T>::HashTableClosed(int size) {
+    M = size;
+    table = new Entry[M];
 }
 
 template <typename T>
-pair<bool, int> HashTableClosed<T>::search(const T& key) const
-{
-    // TO DO: 
-    return {false, 0};
+HashTableClosed<T>::~HashTableClosed() {
+    delete[] table;
+}
+
+template <typename T>
+int HashTableClosed<T>::hash(const T& key) const {
+    return static_cast<int>(key) % M;
+}
+
+template <typename T>
+int HashTableClosed<T>::insert(const T& key) {
+    int probes = 0;
+
+    for (int i = 0; i < M; i++) {
+        int index = probeIndex(key, i);
+        probes++;
+
+        if (!table[index].occupied) {
+            table[index].data = key;
+            table[index].occupied = true;
+            return probes;
+        }
+
+        if (table[index].data == key) {
+            return probes;
+        }
+    }
+
+    return probes; // table full
+}
+
+template <typename T>
+pair<bool, int> HashTableClosed<T>::search(const T& key) const {
+    int probes = 0;
+
+    for (int i = 0; i < M; i++) {
+        int index = probeIndex(key, i);
+        probes++;
+
+        if (!table[index].occupied) {
+            return {false, probes};
+        }
+
+        if (table[index].data == key) {
+            return {true, probes};
+        }
+    }
+
+    return {false, probes};
 }
