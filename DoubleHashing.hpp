@@ -8,7 +8,7 @@ public:
         : HashTableClosed<T>(size) {}
 
     int hash2(const T& key) const {
-        // Formula: 1 + (key % (M - 1))
+        // Primary hash is key % M, Secondary is 1 + (key % (M-1))
         return 1 + (static_cast<int>(key) % (this->M - 1));
     }
 

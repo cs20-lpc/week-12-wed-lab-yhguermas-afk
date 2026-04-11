@@ -11,6 +11,7 @@ public:
         : HashTableClosed<T>(size), skip(skipFactor) {}
 
     int probeIndex(const T& key, int i) const override {
-        return (this->hash(key) + i * skip) % this->M;
+        // Formula: (hash(key) + i * skip) % M
+        return (this->hash(key) + i * this->skip) % this->M;
     }
 };
