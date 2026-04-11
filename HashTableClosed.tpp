@@ -26,19 +26,22 @@ template <typename T>
 int HashTableClosed<T>::insert(const T& key)
 {
     int probes = 0;
+    int firstEmptyIndex = -1;
+
     for (int i = 0; i < M; i++) {
         int index = probeIndex(key, i);
         probes++;
 
-        // If slot is empty, insert and return probes
-        if (!table[index].occupied) {
+        if (table[index].occupied) {
+            // If duplicate found, stop and return total probes used to find it
+            if (table[index].data == key) {
+                return probes;
+            }
+        } else {
+            // First time we see an empty slot, remember it and STOP probing
+            // Standard lab behavior: insert at the first hole found
             table[index].data = key;
             table[index].occupied = true;
-            return probes;
-        }
-
-        // If key already exists, do not insert, just return probes
-        if (table[index].data == key) {
             return probes;
         }
     }
@@ -53,14 +56,12 @@ pair<bool, int> HashTableClosed<T>::search(const T& key) const
         int index = probeIndex(key, i);
         probes++;
 
-        // 1. If we find the key, return true
-        if (table[index].occupied && table[index].data == key) {
-            return {true, probes};
-        }
-
-        // 2. CRITICAL FIX: If we hit an EMPTY slot, the key CANNOT 
-        // exist further down the probe sequence. Stop and return false.
-        if (!table[index].occupied) {
+        if (table[index].occupied) {
+            if (table[index].data == key) {
+                return {true, probes};
+            }
+        } else {
+            // Stop searching at the first empty slot found
             return {false, probes};
         }
     }
