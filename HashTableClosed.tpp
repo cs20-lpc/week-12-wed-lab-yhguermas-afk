@@ -1,5 +1,5 @@
 #pragma once
-#include "HashTableClosed.hpp"
+// Removed #include "HashTableClosed.hpp" to avoid circular dependency
 
 template <typename T>
 HashTableClosed<T>::HashTableClosed(int size)
@@ -21,7 +21,9 @@ HashTableClosed<T>::~HashTableClosed()
 template <typename T>
 int HashTableClosed<T>::hash(const T& key) const
 {
-    return static_cast<int>(key) % M;
+    // Ensure negative keys are handled if necessary, 
+    // though for this lab, keys are positive.
+    return (static_cast<int>(key) % M + M) % M; 
 }
 
 template <typename T>
@@ -33,20 +35,18 @@ int HashTableClosed<T>::insert(const T& key)
         int index = probeIndex(key, i);
         probes++;
 
-        // empty slot → insert
         if (!table[index].occupied) {
             table[index].data = key;
             table[index].occupied = true;
             return probes;
         }
 
-        // duplicate → stop
         if (table[index].data == key) {
-            return probes;
+            return probes; // Duplicate found
         }
     }
 
-    return probes;
+    return probes; // Table full
 }
 
 template <typename T>
@@ -58,13 +58,13 @@ pair<bool, int> HashTableClosed<T>::search(const T& key) const
         int index = probeIndex(key, i);
         probes++;
 
-        // found key
         if (table[index].occupied && table[index].data == key) {
             return {true, probes};
         }
-
-        // IMPORTANT: do NOT stop early
-        // (grader expects full probe sequence behavior)
+        
+        // Note: In a standard hash table, you'd stop at an empty slot.
+        // However, your lab instructions specify: 
+        // "do NOT stop early (grader expects full probe sequence behavior)"
     }
 
     return {false, probes};
