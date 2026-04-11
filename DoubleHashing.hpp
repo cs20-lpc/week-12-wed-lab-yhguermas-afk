@@ -7,16 +7,14 @@ public:
     DoubleHashing(int size = 101)
         : HashTableClosed<T>(size) {}
 
-    // Secondary hash function
-    // Most autograders expect a prime smaller than M to ensure diversity
+    // Original formula from your snippet: 1 + (key % (M - 1))
     int hash2(const T& key) const {
-        return 13 - (static_cast<int>(key) % 13);
+        return 1 + (static_cast<int>(key) % (this->M - 1));
     }
 
     int probeIndex(const T& key, int i) const override {
-        // Formula: (h1(k) + i * h2(k)) % M
-        int h1 = this->hash(key);
-        int h2 = hash2(key);
-        return (h1 + i * h2) % this->M;
+        // Formula: (h1(key) + i * h2(key)) % M
+        // Ensure the addition and multiplication happen before the modulo
+        return (this->hash(key) + i * hash2(key)) % this->M;
     }
 };
