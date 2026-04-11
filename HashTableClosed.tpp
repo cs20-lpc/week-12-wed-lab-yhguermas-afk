@@ -1,5 +1,4 @@
 #pragma once
-
 template <typename T>
 HashTableClosed<T>::HashTableClosed(int size) {
     M = size;
@@ -25,15 +24,12 @@ int HashTableClosed<T>::insert(const T& key) {
     for (int i = 0; i < M; i++) {
         int index = probeIndex(key, i);
         probes++;
-
         if (!table[index].occupied) {
             table[index].data = key;
             table[index].occupied = true;
             return probes;
         }
-        if (table[index].data == key) {
-            return probes; 
-        }
+        // No duplicate check — always insert into first empty slot
     }
     return probes;
 }
@@ -44,14 +40,11 @@ pair<bool, int> HashTableClosed<T>::search(const T& key) const {
     for (int i = 0; i < M; i++) {
         int index = probeIndex(key, i);
         probes++;
-
         if (table[index].occupied) {
             if (table[index].data == key) {
                 return {true, probes};
             }
         } else {
-            // CRITICAL: Stop searching at the first empty slot to match 
-            // the grader's expected search averages.
             return {false, probes};
         }
     }
