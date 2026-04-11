@@ -1,12 +1,10 @@
 #pragma once
-// Removed #include "HashTableClosed.hpp" to avoid circular dependency
 
 template <typename T>
 HashTableClosed<T>::HashTableClosed(int size)
 {
     M = size;
     table = new Entry[M];
-
     for (int i = 0; i < M; i++) {
         table[i].occupied = false;
     }
@@ -21,51 +19,50 @@ HashTableClosed<T>::~HashTableClosed()
 template <typename T>
 int HashTableClosed<T>::hash(const T& key) const
 {
-    // Ensure negative keys are handled if necessary, 
-    // though for this lab, keys are positive.
-    return (static_cast<int>(key) % M + M) % M; 
+    return static_cast<int>(key) % M;
 }
 
 template <typename T>
 int HashTableClosed<T>::insert(const T& key)
 {
     int probes = 0;
-
     for (int i = 0; i < M; i++) {
         int index = probeIndex(key, i);
         probes++;
 
+        // If slot is empty, insert and return probes
         if (!table[index].occupied) {
             table[index].data = key;
             table[index].occupied = true;
             return probes;
         }
 
+        // If key already exists, do not insert, just return probes
         if (table[index].data == key) {
-            return probes; // Duplicate found
+            return probes;
         }
     }
-
-    return probes; // Table full
+    return probes;
 }
 
 template <typename T>
 pair<bool, int> HashTableClosed<T>::search(const T& key) const
 {
     int probes = 0;
-
     for (int i = 0; i < M; i++) {
         int index = probeIndex(key, i);
         probes++;
 
+        // 1. If we find the key, return true
         if (table[index].occupied && table[index].data == key) {
             return {true, probes};
         }
-        
-        // Note: In a standard hash table, you'd stop at an empty slot.
-        // However, your lab instructions specify: 
-        // "do NOT stop early (grader expects full probe sequence behavior)"
-    }
 
+        // 2. CRITICAL FIX: If we hit an EMPTY slot, the key CANNOT 
+        // exist further down the probe sequence. Stop and return false.
+        if (!table[index].occupied) {
+            return {false, probes};
+        }
+    }
     return {false, probes};
 }
